@@ -7,6 +7,7 @@ Inspired by @qwik/auth, I made this plugin for speed up auth feature in my new Q
 ## Soon
 
 - Secure cookies
+- Registration
 - Providers
 
 ## How to use it?
