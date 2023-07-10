@@ -37,7 +37,7 @@ export interface StrapiAuthSession {
     };
 }
 export declare function me({ url }: StrapiAuthConfig, jwt: string): Promise<any>;
-export declare function login({ identifier, password }: Credentials, { url }: StrapiAuthConfig): Promise<AuthError | StrapiAuthSession>;
+export declare function login({ identifier, password }: Credentials, { url }: StrapiAuthConfig): Promise<string | AuthError | StrapiAuthSession>;
 export declare function register(data: RegisterProps, { url }: StrapiAuthConfig): Promise<any>;
 export declare function logout(req: RequestEventAction): Promise<void>;
 export declare function strapiAuthQrl(authOptions: QRL<(ev: RequestEventCommon) => StrapiAuthConfig>): {

@@ -86,8 +86,7 @@ export async function login({ identifier, password }: Credentials, { url }: Stra
 
     return (await response.json()) as StrapiAuthSession;
   } catch (error: any) {
-    console.log("error :>> ", error.response);
-    return error as AuthError;
+    return (error.response ? error.response : error.message) as AuthError | string;
   }
 }
 
@@ -123,7 +122,9 @@ export function strapiAuthQrl(authOptions: QRL<(ev: RequestEventCommon) => Strap
 
       const response = await login(creds, auth);
 
-      if ("error" in response) {
+      if (typeof response === "string") {
+        return { error: response };
+      } else if ("error" in response) {
         return { error: response.error.message };
       } else {
         req.cookie.set("jwt", response.jwt);
