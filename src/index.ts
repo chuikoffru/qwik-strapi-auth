@@ -89,15 +89,21 @@ export async function login({ identifier, password }: Credentials, { url }: Stra
   }
 }
 
-export async function register(data: RegisterProps, { url }: StrapiAuthConfig) {
-  const response = await fetch(`${url}/api/auth/local/register`, {
-    method: "POST",
-    body: new URLSearchParams(data),
-  });
+export async function register(
+  { username, email, password }: RegisterProps,
+  { url }: StrapiAuthConfig
+) {
   try {
-    return await response.json();
-  } catch (error) {
-    return await response.text();
+    const response = await fetch(new URL("/api/auth/local/register", url), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, email, password }),
+    });
+    return (await response.json()) as StrapiAuthSession;
+  } catch (error: any) {
+    return (error.response ? error.response : error.message) as AuthError | string;
   }
 }
 
@@ -127,9 +133,30 @@ export function strapiAuthQrl(authOptions: QRL<(ev: RequestEventCommon) => Strap
       }
     },
     zod$({
-      provider: z.enum(["local", "github"]),
       callbackUrl: z.string().optional(),
-      authorizationParams: z.custom<URLSearchParams>().optional(),
+    })
+  );
+
+  const useAuthSignup = globalAction$(
+    async (_, req) => {
+      const auth = await authOptions(req);
+
+      const creds = (await req.parseBody()) as RegisterProps;
+
+      const response = await register(creds, auth);
+
+      if (typeof response === "string") {
+        return { error: response };
+      } else if ("error" in response) {
+        return { error: response.error.message };
+      } else {
+        req.cookie.set("jwt", response.jwt);
+        req.sharedMap.set("session", response);
+        return response;
+      }
+    },
+    zod$({
+      callbackUrl: z.string().optional(),
     })
   );
 
@@ -166,6 +193,7 @@ export function strapiAuthQrl(authOptions: QRL<(ev: RequestEventCommon) => Strap
 
   return {
     useAuthSignin,
+    useAuthSignup,
     useAuthSession,
     useAuthLogout,
   };
