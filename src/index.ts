@@ -8,7 +8,6 @@ import {
   type RequestEventCommon,
   z,
   zod$,
-  RequestEventAction,
 } from "@builder.io/qwik-city";
 
 export type AuthError = {
@@ -102,11 +101,6 @@ export async function register(data: RegisterProps, { url }: StrapiAuthConfig) {
   }
 }
 
-export async function logout(req: RequestEventAction) {
-  req.cookie.delete("jwt");
-  req.sharedMap.delete("session");
-}
-
 export function strapiAuthQrl(authOptions: QRL<(ev: RequestEventCommon) => StrapiAuthConfig>) {
   const useAuthSignin = globalAction$(
     async (_, req) => {
@@ -140,7 +134,8 @@ export function strapiAuthQrl(authOptions: QRL<(ev: RequestEventCommon) => Strap
   );
 
   const useAuthLogout = globalAction$(async (_, req) => {
-    await logout(req);
+    req.cookie.delete("jwt");
+    req.sharedMap.delete("session");
   });
 
   const useAuthSession = routeLoader$(async (req) => {
