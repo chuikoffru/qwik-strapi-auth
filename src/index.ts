@@ -10,117 +10,8 @@ import {
   zod$,
 } from "@builder.io/qwik-city";
 
-export type AuthError = {
-  data: null;
-  error: {
-    status: number;
-    message: string;
-    name: string;
-  };
-};
-
-export type StrapiAuthConfig = {
-  url: string;
-  callbackUrl?: string;
-};
-
-export type Credentials = {
-  identifier: string;
-  password: string;
-};
-
-export type RegisterProps = {
-  username: string;
-  email: string;
-  password: string;
-};
-
-export interface StrapiAuthSession {
-  jwt: string;
-  user: {
-    id: string;
-
-    username: string;
-
-    email: string;
-
-    provider: string;
-
-    confirmed: boolean;
-
-    blocked: boolean;
-
-    role: {
-      id: number;
-      name: string;
-    };
-  };
-}
-
-export async function me({ url }: StrapiAuthConfig, jwt: string) {
-  try {
-    const response = await fetch(new URL("api/users/me", url), {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${jwt}`,
-      },
-    });
-
-    return await response.json();
-  } catch (error) {
-    return error;
-  }
-}
-
-export async function connect({ url }: StrapiAuthConfig, provider: string) {
-  try {
-    const response = await fetch(new URL(`/api/connect/${provider}`, url), {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    return new URL(decodeURIComponent(decodeURI(response.url)));
-  } catch (error: any) {
-    return { error: error.message };
-  }
-}
-
-export async function login({ identifier, password }: Credentials, { url }: StrapiAuthConfig) {
-  try {
-    const response = await fetch(new URL("api/auth/local", url), {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ identifier, password }),
-    });
-
-    return (await response.json()) as StrapiAuthSession;
-  } catch (error: any) {
-    return (error.response ? error.response : error.message) as AuthError | string;
-  }
-}
-
-export async function register(
-  { username, email, password }: RegisterProps,
-  { url }: StrapiAuthConfig
-) {
-  try {
-    const response = await fetch(new URL("/api/auth/local/register", url), {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, email, password }),
-    });
-    return (await response.json()) as StrapiAuthSession;
-  } catch (error: any) {
-    return (error.response ? error.response : error.message) as AuthError | string;
-  }
-}
+import { Credentials, RegisterProps, StrapiAuthConfig, StrapiAuthSession } from "./types";
+import { connect, login, me, register } from "./api";
 
 export function strapiAuthQrl(authOptions: QRL<(ev: RequestEventCommon) => StrapiAuthConfig>) {
   const useAuthSignin = globalAction$(
@@ -176,19 +67,20 @@ export function strapiAuthQrl(authOptions: QRL<(ev: RequestEventCommon) => Strap
   );
 
   const useAuthConnect = globalAction$(
-    async (_, req) => {
+    async (params, req) => {
       const auth = await authOptions(req);
       const url = await connect(auth, "github");
       if ("error" in url) {
         return { error: url.error };
       } else {
         // TODO: fix https://discord.com/channels/842438759945601056/1125748773855973456/1125748773855973456
-        throw req.redirect(302, url.toString());
+        return url.toString();
       }
     },
     zod$({
       callbackUrl: z.string().optional(),
       provider: z.enum(["github", "google", "facebook"]),
+      cb: z.function().optional(),
     })
   );
 
