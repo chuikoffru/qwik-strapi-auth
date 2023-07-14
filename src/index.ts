@@ -73,6 +73,21 @@ export async function me({ url }: StrapiAuthConfig, jwt: string) {
   }
 }
 
+export async function connect({ url }: StrapiAuthConfig, provider: string) {
+  try {
+    const response = await fetch(new URL(`/api/connect/${provider}`, url), {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    return new URL(decodeURIComponent(decodeURI(response.url)));
+  } catch (error: any) {
+    return { error: error.message };
+  }
+}
+
 export async function login({ identifier, password }: Credentials, { url }: StrapiAuthConfig) {
   try {
     const response = await fetch(new URL("api/auth/local", url), {
@@ -160,6 +175,23 @@ export function strapiAuthQrl(authOptions: QRL<(ev: RequestEventCommon) => Strap
     })
   );
 
+  const useAuthConnect = globalAction$(
+    async (_, req) => {
+      const auth = await authOptions(req);
+      const url = await connect(auth, "github");
+      if ("error" in url) {
+        return { error: url.error };
+      } else {
+        // TODO: fix https://discord.com/channels/842438759945601056/1125748773855973456/1125748773855973456
+        throw req.redirect(302, url.toString());
+      }
+    },
+    zod$({
+      callbackUrl: z.string().optional(),
+      provider: z.enum(["github", "google", "facebook"]),
+    })
+  );
+
   const useAuthLogout = globalAction$(async (_, req) => {
     req.cookie.delete("jwt");
     req.sharedMap.delete("session");
@@ -194,6 +226,7 @@ export function strapiAuthQrl(authOptions: QRL<(ev: RequestEventCommon) => Strap
   return {
     useAuthSignin,
     useAuthSignup,
+    useAuthConnect,
     useAuthSession,
     useAuthLogout,
   };
