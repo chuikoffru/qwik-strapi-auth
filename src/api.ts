@@ -26,10 +26,6 @@ export async function connect({ url }: StrapiAuthConfig, provider: string) {
   try {
     const response = await fetch(new URL(`/api/connect/${provider}`, url), {
       method: "GET",
-      redirect: "follow",
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
 
     return new URL(decodeURIComponent(decodeURI(response.url)));

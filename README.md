@@ -30,10 +30,10 @@ export default component$(() => {
 
   return (
     <Form action={login}>
-        <input type="hidden" name="provider" value="local" />
-        <input type="text" name="identifier" />
-        <input type="password" name="password" />
-        <button type="submit">Sign in</button>
+      <input type="hidden" name="provider" value="local" />
+      <input type="text" name="identifier" />
+      <input type="password" name="password" />
+      <button type="submit">Sign in</button>
     </Form>
   )
 })
@@ -44,23 +44,38 @@ On Header component
 
 ```
 export default component$(() => {
-    const session = useAuthSession();
-    const logout = useAuthLogout();
+  const session = useAuthSession();
+  const logout = useAuthLogout();
 
-    return (
-        <header>
-        {session.value ? 
-            (<div>
-                Hello, {session.value.user.username}
-                <Form action={logout}>
-                    <button type="submit">Sign out</button>
-                </Form>
-            </div>) : 
-            (<Link href="/login">Login</Link>)
-        }
-        </header>
-    )
+  return (
+    <header>
+    {session.value ? 
+      (<div>
+        Hello, {session.value.user.username}
+        <Form action={logout}>
+          <button type="submit">Sign out</button>
+        </Form>
+      </div>) : 
+      (<Link href="/login">Login</Link>)
+    }
+    </header>
+  )
 })
 ```
 
+## How to use Auth Providers?
 
+```
+export default component$(() => {
+  const connect = useAuthConnect();
+  const nav = useNavigate();
+
+  const handleConnect = $((provider: StrapiProviders) => {
+    connect.submit({ provider }).then((res) => nav(res.value.url));
+  });
+
+  return (
+    <button onClick$={() => handleConnect("github")}>Connect github</button>
+  );
+});
+```

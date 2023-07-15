@@ -1,6 +1,7 @@
 /* eslint-disable qwik/loader-location */
 
 import { implicit$FirstArg, type QRL } from "@builder.io/qwik";
+
 import {
   globalAction$,
   routeLoader$,
@@ -12,6 +13,10 @@ import {
 
 import { Credentials, RegisterProps, StrapiAuthConfig, StrapiAuthSession } from "./types";
 import { connect, login, me, register } from "./api";
+
+const providers = z.enum(["github", "google", "facebook"]);
+
+export type StrapiProviders = z.infer<typeof providers>;
 
 export function strapiAuthQrl(authOptions: QRL<(ev: RequestEventCommon) => StrapiAuthConfig>) {
   const useAuthSignin = globalAction$(
@@ -67,20 +72,18 @@ export function strapiAuthQrl(authOptions: QRL<(ev: RequestEventCommon) => Strap
   );
 
   const useAuthConnect = globalAction$(
-    async (params, req) => {
+    async (_, req) => {
       const auth = await authOptions(req);
       const url = await connect(auth, "github");
       if ("error" in url) {
         return { error: url.error };
       } else {
-        // TODO: fix https://discord.com/channels/842438759945601056/1125748773855973456/1125748773855973456
-        return url.toString();
+        return { url: url.toString() };
       }
     },
     zod$({
       callbackUrl: z.string().optional(),
-      provider: z.enum(["github", "google", "facebook"]),
-      cb: z.function().optional(),
+      provider: providers,
     })
   );
 
