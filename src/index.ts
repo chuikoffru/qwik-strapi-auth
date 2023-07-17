@@ -75,6 +75,15 @@ export function strapiAuthQrl(authOptions: QRL<(ev: RequestEventCommon) => Strap
     async (_, req) => {
       const auth = await authOptions(req);
       const url = await connect(auth, "github");
+
+      // If you don't need to hide real backend url, you can use code below
+      /* 
+      const { url } = await authOptions(req);
+      return {
+        url: `${url}/api/connect/${provider}`,
+      }; 
+      */
+
       if ("error" in url) {
         return { error: url.error };
       } else {
@@ -82,7 +91,6 @@ export function strapiAuthQrl(authOptions: QRL<(ev: RequestEventCommon) => Strap
       }
     },
     zod$({
-      callbackUrl: z.string().optional(),
       provider: providers,
     })
   );
