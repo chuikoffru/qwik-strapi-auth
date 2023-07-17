@@ -24,9 +24,7 @@ export async function me({ url }: StrapiAuthConfig, jwt: string) {
 
 export async function connect({ url }: StrapiAuthConfig, provider: string) {
   try {
-    const response = await fetch(new URL(`/api/connect/${provider}`, url), {
-      method: "GET",
-    });
+    const response = await fetch(new URL(`/api/connect/${provider}`, url));
 
     return new URL(decodeURIComponent(decodeURI(response.url)));
   } catch (error: any) {
