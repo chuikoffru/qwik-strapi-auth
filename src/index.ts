@@ -12,7 +12,7 @@ import {
 } from "@builder.io/qwik-city";
 
 import { Credentials, RegisterProps, StrapiAuthConfig, StrapiAuthSession } from "./types";
-import { connect, login, me, register } from "./api";
+import { callback, connect, login, me, register } from "./api";
 
 const providers = z.enum(["github", "google", "facebook"]);
 
@@ -126,12 +126,30 @@ export function strapiAuthQrl(authOptions: QRL<(ev: RequestEventCommon) => Strap
     return null;
   });
 
+  const callbackAuthMiddleware = async (req: RequestEvent) => {
+    const auth = await authOptions(req);
+    // get provider from the url
+    const provider = req.pathname.replace("/connect/", "");
+
+    // get access_token from the url
+    const access_token = req.query.get("access_token");
+
+    if (!access_token) {
+      throw req.error(403, "No access token");
+    }
+
+    const user = await callback(auth, provider, access_token);
+
+    return user;
+  };
+
   return {
     useAuthSignin,
     useAuthSignup,
     useAuthConnect,
     useAuthSession,
     useAuthLogout,
+    callbackAuthMiddleware,
   };
 }
 

@@ -32,6 +32,16 @@ export async function connect({ url }: StrapiAuthConfig, provider: string) {
   }
 }
 
+export async function callback({ url }: StrapiAuthConfig, provider: string, code: string) {
+  try {
+    const response = await fetch(new URL(`/api/auth/${provider}/callback?code=${code}`, url));
+    const data = await response.json();
+    return data as StrapiAuthSession;
+  } catch (error: any) {
+    return { error: error.message };
+  }
+}
+
 export async function login({ identifier, password }: Credentials, { url }: StrapiAuthConfig) {
   try {
     const response = await fetch(new URL("api/auth/local", url), {

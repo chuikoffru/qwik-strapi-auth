@@ -18,10 +18,10 @@ export declare function strapiAuthQrl(authOptions: QRL<(ev: RequestEventCommon) 
                 name: string;
             };
         } | undefined;
+        error?: undefined;
         formErrors?: undefined;
         fieldErrors?: undefined;
         failed?: undefined;
-        error?: undefined;
     } | {
         error?: string | undefined;
         formErrors?: undefined;
@@ -55,10 +55,10 @@ export declare function strapiAuthQrl(authOptions: QRL<(ev: RequestEventCommon) 
                 name: string;
             };
         } | undefined;
+        error?: undefined;
         formErrors?: undefined;
         fieldErrors?: undefined;
         failed?: undefined;
-        error?: undefined;
     } | {
         error?: string | undefined;
         formErrors?: undefined;
@@ -93,20 +93,19 @@ export declare function strapiAuthQrl(authOptions: QRL<(ev: RequestEventCommon) 
     } | {
         formErrors?: string[] | undefined;
         fieldErrors?: {
-            callbackUrl?: string[] | undefined;
             provider?: string[] | undefined;
-            cb?: string[] | undefined;
         } | undefined;
         failed?: true | undefined;
-        error?: undefined;
         url?: undefined;
+        error?: undefined;
     }, {
         provider: "github" | "google" | "facebook";
-        callbackUrl?: string | undefined;
-        cb?: ((args_0: string, ...args_1: unknown[]) => unknown) | undefined;
     }, false>;
     useAuthSession: import("@builder.io/qwik-city").Loader<StrapiAuthSession | null>;
     useAuthLogout: import("@builder.io/qwik-city").Action<{}, Record<string, any>, true>;
+    callbackAuthMiddleware: (req: RequestEvent) => Promise<StrapiAuthSession | {
+        error: any;
+    }>;
 };
 export declare const strapiAuth$: (first: (ev: RequestEventCommon) => StrapiAuthConfig) => {
     useAuthSignin: import("@builder.io/qwik-city").Action<{
@@ -123,10 +122,10 @@ export declare const strapiAuth$: (first: (ev: RequestEventCommon) => StrapiAuth
                 name: string;
             };
         } | undefined;
+        error?: undefined;
         formErrors?: undefined;
         fieldErrors?: undefined;
         failed?: undefined;
-        error?: undefined;
     } | {
         error?: string | undefined;
         formErrors?: undefined;
@@ -160,10 +159,10 @@ export declare const strapiAuth$: (first: (ev: RequestEventCommon) => StrapiAuth
                 name: string;
             };
         } | undefined;
+        error?: undefined;
         formErrors?: undefined;
         fieldErrors?: undefined;
         failed?: undefined;
-        error?: undefined;
     } | {
         error?: string | undefined;
         formErrors?: undefined;
@@ -198,20 +197,19 @@ export declare const strapiAuth$: (first: (ev: RequestEventCommon) => StrapiAuth
     } | {
         formErrors?: string[] | undefined;
         fieldErrors?: {
-            callbackUrl?: string[] | undefined;
             provider?: string[] | undefined;
-            cb?: string[] | undefined;
         } | undefined;
         failed?: true | undefined;
-        error?: undefined;
         url?: undefined;
+        error?: undefined;
     }, {
         provider: "github" | "google" | "facebook";
-        callbackUrl?: string | undefined;
-        cb?: ((args_0: string, ...args_1: unknown[]) => unknown) | undefined;
     }, false>;
     useAuthSession: import("@builder.io/qwik-city").Loader<StrapiAuthSession | null>;
     useAuthLogout: import("@builder.io/qwik-city").Action<{}, Record<string, any>, true>;
+    callbackAuthMiddleware: (req: RequestEvent) => Promise<StrapiAuthSession | {
+        error: any;
+    }>;
 };
 export declare const ensureAuthMiddleware: (req: RequestEvent) => void;
 export {};
