@@ -18,10 +18,10 @@ export declare function strapiAuthQrl(authOptions: QRL<(ev: RequestEventCommon) 
                 name: string;
             };
         } | undefined;
-        error?: undefined;
         formErrors?: undefined;
         fieldErrors?: undefined;
         failed?: undefined;
+        error?: undefined;
     } | {
         error?: string | undefined;
         formErrors?: undefined;
@@ -55,10 +55,10 @@ export declare function strapiAuthQrl(authOptions: QRL<(ev: RequestEventCommon) 
                 name: string;
             };
         } | undefined;
-        error?: undefined;
         formErrors?: undefined;
         fieldErrors?: undefined;
         failed?: undefined;
+        error?: undefined;
     } | {
         error?: string | undefined;
         formErrors?: undefined;
@@ -96,8 +96,8 @@ export declare function strapiAuthQrl(authOptions: QRL<(ev: RequestEventCommon) 
             provider?: string[] | undefined;
         } | undefined;
         failed?: true | undefined;
-        url?: undefined;
         error?: undefined;
+        url?: undefined;
     }, {
         provider: "github" | "google" | "facebook";
     }, false>;
@@ -122,10 +122,10 @@ export declare const strapiAuth$: (first: (ev: RequestEventCommon) => StrapiAuth
                 name: string;
             };
         } | undefined;
-        error?: undefined;
         formErrors?: undefined;
         fieldErrors?: undefined;
         failed?: undefined;
+        error?: undefined;
     } | {
         error?: string | undefined;
         formErrors?: undefined;
@@ -159,10 +159,10 @@ export declare const strapiAuth$: (first: (ev: RequestEventCommon) => StrapiAuth
                 name: string;
             };
         } | undefined;
-        error?: undefined;
         formErrors?: undefined;
         fieldErrors?: undefined;
         failed?: undefined;
+        error?: undefined;
     } | {
         error?: string | undefined;
         formErrors?: undefined;
@@ -200,8 +200,8 @@ export declare const strapiAuth$: (first: (ev: RequestEventCommon) => StrapiAuth
             provider?: string[] | undefined;
         } | undefined;
         failed?: true | undefined;
-        url?: undefined;
         error?: undefined;
+        url?: undefined;
     }, {
         provider: "github" | "google" | "facebook";
     }, false>;
