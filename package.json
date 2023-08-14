@@ -1,6 +1,6 @@
 {
   "name": "qwik-strapi-auth",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Plugin for authentication with Strapi in Qwik projects",
   "author": "Konstantin Chuykov <chuikoff.ru@gmail.com>",
   "repository": {
